@@ -1,0 +1,31 @@
+# --- Faz 1-2: Veri, ön işleme, görselleştirme ---
+pandas>=2.0,<3.0
+numpy>=1.24
+scikit-learn>=1.4
+matplotlib>=3.7
+seaborn>=0.13
+missingno>=0.5
+
+# --- Faz 3: Sentetik veri ---
+imbalanced-learn>=0.12
+sdv>=1.10
+scipy>=1.11
+
+# --- Faz 4: Perceptron & GBDT ---
+xgboost>=2.0
+lightgbm>=4.0
+optuna>=3.5
+
+# --- Faz 5: TabNet ---
+torch>=2.0
+pytorch-tabnet>=4.1
+
+# --- Notebook & kod kalitesi ---
+jupyter
+ipykernel
+nbformat
+nbconvert
+flake8
+
+# --- Yerel kaynak paketi (src) ---
+-e .
