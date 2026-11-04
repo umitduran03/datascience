@@ -35,7 +35,7 @@ src/                 Yeniden kullanılabilir Python modülleri
 | Üye | Rol |
 |---|---|
 | Ümit | Veri Mimarı & Kalite Uzmanı — Sözlü Sunum |
-| Ertu | Klasik & Ağaç Modelleri Uzmanı — Kod Savunması |
+| Ertuğrul | Klasik & Ağaç Modelleri Uzmanı — Kod Savunması |
 | Yunus Emre | TabNet & Analitik Uzmanı — Kod Savunması |
 
 ## İlerleme
@@ -43,6 +43,6 @@ src/                 Yeniden kullanılabilir Python modülleri
 - [x] Faz 1 — Veri seti seçimi ve kısıt doğrulaması (`notebooks/01_faz1_veri_dogrulama.ipynb`)
 - [x] Faz 2 — Veri kalitesi, MVI, encoding & scaling (`notebooks/02_faz2_on_isleme_ve_mvi.ipynb`)
 - [x] Faz 3 — Sentetik veri (SMOTE + CTGAN) ve kalite testleri (`notebooks/03_faz3_sentetik_veri_ve_kalite.ipynb`)
-- [ ] Faz 4 — Perceptron & GBDT
+- [x] Faz 4 — Perceptron & GBDT (`notebooks/04_faz4_perceptron_ve_gbdt.ipynb`)
 - [ ] Faz 5 — TabNet & zorunlu grafikler
 - [ ] Faz 6 — Final metrikler, sunum, teslim
