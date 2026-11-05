@@ -4,7 +4,11 @@ Tüm modüller yolları ve proje kısıtlarını buradan okur; böylece
 eşik değerleri tek bir yerden yönetilir.
 """
 
+import os
 from pathlib import Path
+
+# macOS OpenMP kütüphane çakışmasını engelle
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # --- Dizin yapısı ---------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

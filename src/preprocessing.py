@@ -14,6 +14,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
+from sklearn.linear_model import Ridge
 from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, TargetEncoder
@@ -270,6 +271,9 @@ def build_preprocessor(df: pd.DataFrame, imputer: str = "mice") -> Pipeline:
         steps.append((
             "mice",
             IterativeImputer(
+                estimator=Ridge(
+                    alpha=1.0, random_state=config.RANDOM_STATE
+                ),
                 max_iter=10,
                 skip_complete=True,
                 random_state=config.RANDOM_STATE,

@@ -44,5 +44,5 @@ src/                 Yeniden kullanılabilir Python modülleri
 - [x] Faz 2 — Veri kalitesi, MVI, encoding & scaling (`notebooks/02_faz2_on_isleme_ve_mvi.ipynb`)
 - [x] Faz 3 — Sentetik veri (SMOTE + CTGAN) ve kalite testleri (`notebooks/03_faz3_sentetik_veri_ve_kalite.ipynb`)
 - [x] Faz 4 — Perceptron & GBDT (`notebooks/04_faz4_perceptron_ve_gbdt.ipynb`)
-- [ ] Faz 5 — TabNet & zorunlu grafikler
+- [x] Faz 5 — TabNet & zorunlu grafikler (`notebooks/05_faz5_tabnet_ve_zorunlu_grafikler.ipynb`)
 - [ ] Faz 6 — Final metrikler, sunum, teslim
