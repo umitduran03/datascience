@@ -169,7 +169,7 @@ def fit_tabnet(
             y_train=y_tr_arr,
             eval_set=eval_set,
             eval_name=eval_name,
-            eval_metric=["auc"],
+            eval_metric=["logloss", "auc"],
             max_epochs=max_epochs,
             patience=patience,
             batch_size=batch_size,
@@ -357,6 +357,25 @@ def aggregate_tabnet_importances(
     return agg_df.sort_values(
         by="Önem_Skoru", ascending=False
     ).reset_index(drop=True)
+
+
+def aggregate_step_masks(
+    step_masks_df: pd.DataFrame,
+    raw_columns: list[str],
+) -> pd.DataFrame:
+    """154 kodlanmış özellik için adım bazlı dikkat maskelerini 42 ana klinik
+    özellik altında toplayarak adım bazlı klinik dikkat matrisini döner.
+    """
+    idx_series = pd.Series(step_masks_df.index, index=step_masks_df.index)
+    rows = {}
+    for raw_col in raw_columns:
+        mask = idx_series.str.startswith(f"{raw_col}_") | (
+            idx_series == raw_col
+        )
+        sub = step_masks_df.loc[mask]
+        if not sub.empty:
+            rows[raw_col] = sub.sum(axis=0)
+    return pd.DataFrame.from_dict(rows, orient="index")
 
 
 # =========================================================================

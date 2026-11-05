@@ -292,9 +292,22 @@ def plot_tabnet_masks_vs_gbdt_importance(
     # GBDT'nin en önemli top_n özelliğini referans al
     top_features = list(gbdt_feat_imp_df["Özellik"].head(top_n))
 
-    # TabNet adım maskelerini bu özellikler için sırala
-    avail_top = [f for f in top_features if f in tabnet_step_masks_df.index]
-    tabnet_sub = tabnet_step_masks_df.loc[avail_top]
+    # TabNet adım maskelerini bu özellikler için hazırla (gerekirse OHE grupla)
+    idx_s = pd.Series(
+        tabnet_step_masks_df.index, index=tabnet_step_masks_df.index
+    )
+    rows = {}
+    for feat in top_features:
+        if feat in tabnet_step_masks_df.index:
+            rows[feat] = tabnet_step_masks_df.loc[feat]
+        else:
+            mask = idx_s.str.startswith(f"{feat}_") | (idx_s == feat)
+            sub = tabnet_step_masks_df.loc[mask]
+            if not sub.empty:
+                rows[feat] = sub.sum(axis=0)
+
+    avail_top = list(rows.keys())
+    tabnet_sub = pd.DataFrame.from_dict(rows, orient="index")
 
     fig, (ax1, ax2) = plt.subplots(
         1, 2, figsize=(16, 7), dpi=300, gridspec_kw={"width_ratios": [1.1, 1]}
@@ -316,11 +329,14 @@ def plot_tabnet_masks_vs_gbdt_importance(
     )
     ax1.set_xlabel("Karar Adımları (Decision Steps)", fontsize=10)
     ax1.set_ylabel("Klinik Özellikler", fontsize=10)
+    ax1.tick_params(axis="y", labelrotation=0)
 
-    # Sağ Panel: GBDT Özellik Önemleri Yatay Çubuk Grafiği
-    gbdt_sub = gbdt_feat_imp_df[
-        gbdt_feat_imp_df["Özellik"].isin(avail_top)
-    ].sort_values(by="Önem_%", ascending=True)
+    # Sağ Panel: GBDT Özellik Önemleri Yatay Çubuk Grafiği (1-e-1 hizalı)
+    gbdt_sub = (
+        gbdt_feat_imp_df.set_index("Özellik")
+        .loc[avail_top[::-1]]
+        .reset_index()
+    )
 
     y_pos = np.arange(len(gbdt_sub))
     bars = ax2.barh(
@@ -501,12 +517,15 @@ def plot_normalized_confusion_matrix_grid(
 
     n_models = len(models_dict)
     fig, axes = plt.subplots(
-        1, n_models, figsize=(5.5 * n_models, 4.8), dpi=300
+        1, n_models, figsize=(6.2 * n_models, 5.4), dpi=300
     )
     if n_models == 1:
         axes = [axes]
 
-    labels = ["Yatış Yok / >30g (0)", "<30g Yeniden Yatış (1)"]
+    labels = [
+        "Yatış Yok / >30g\n(Sınıf 0)",
+        "<30g Yeniden Yatış\n(Sınıf 1)",
+    ]
 
     for idx, (name, payload) in enumerate(models_dict.items()):
         ax = axes[idx]
@@ -522,11 +541,12 @@ def plot_normalized_confusion_matrix_grid(
             ax=ax,
             annot=True,
             fmt=".2%",
+            annot_kws={"size": 10, "weight": "bold"},
             cmap="Blues",
             vmin=0.0,
             vmax=1.0,
             xticklabels=labels,
-            yticklabels=labels,
+            yticklabels=labels if idx == 0 else False,
             cbar=cbar_arg,
             cbar_kws=cbar_kw,
         )
@@ -535,24 +555,27 @@ def plot_normalized_confusion_matrix_grid(
 
         ax.set_title(
             f"{name}\nMacro F1: {macro_f1:.4f} | PR-AUC: {pr_auc:.4f}",
-            fontsize=10,
+            fontsize=10.5,
             fontweight="bold",
-            pad=10,
+            pad=12,
         )
-        ax.set_xlabel("Tahmin Edilen Sınıf", fontsize=9)
+        ax.set_xlabel("Tahmin Edilen Sınıf", fontsize=9.5, labelpad=8)
+        ax.tick_params(axis="x", labelrotation=0, labelsize=9)
         if idx == 0:
-            ax.set_ylabel("Gerçek Sınıf", fontsize=9)
+            ax.set_ylabel("Gerçek Sınıf", fontsize=9.5, labelpad=8)
+            ax.tick_params(axis="y", labelrotation=0, labelsize=9)
         else:
             ax.set_ylabel("")
 
     plt.suptitle(
         "Zorunlu Grafik 6: Normalize Edilmiş Karmaşıklık Matrisleri "
         "(Confusion Matrix Grid)",
-        fontsize=13,
+        fontsize=13.5,
         fontweight="bold",
-        y=0.98,
+        y=0.99,
     )
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    fig.subplots_adjust(wspace=0.18)
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     return fig
